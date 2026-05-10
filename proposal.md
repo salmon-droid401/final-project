@@ -8,7 +8,7 @@ The player has to jump on platforms and make it to the end of the garden before 
 
 ## Features
 - Movement
-	- The player character moves if the user presses space, 'w', or 'a'.
+	- The player character moves if the user presses space, 'd', or 'a'.
 - Enemy
 	- If it touches the player, the level resets. Acts as a time limit for the player to complete the level.
 
