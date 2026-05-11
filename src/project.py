@@ -10,6 +10,7 @@ class Player():
     def __init__(self):
         pass
 
+
 def main():
     bg = pygame.image.load("Background.png")
     fps = 60
