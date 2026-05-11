@@ -1,11 +1,12 @@
 import pygame
+import math
 
 pygame.init()
 pygame.display.set_caption("Garden Escape")
 resolution = (1920, 1080)
 screen = pygame.display.set_mode(resolution)
 
-class Player():
+class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         pass
