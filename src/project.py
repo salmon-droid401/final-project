@@ -7,8 +7,13 @@ resolution = (1920, 1080)
 player_vel = 10
 screen = pygame.display.set_mode(resolution)
 
+def flip(sprite):
+    return [pygame.transform.flip(sprite, True, False)]
+
 class Player(pygame.sprite.Sprite):
     color = (255, 0, 0)
+    gravity = 1
+    sprite = pygame.image.load("Player.png")
 
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
@@ -17,6 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.mask = None
         self.direction =  "left"
         self.animation_count = 0
+        self.fall_count = 0
 
     def move(self, dx, dy):
         self.rect.x += dx
@@ -35,10 +41,13 @@ class Player(pygame.sprite.Sprite):
             self.animation_count = 0
 
     def loop(self, fps):
+        self.y_vel += min(1,  (self.fall_count / fps) * self.gravity)
         self.move(self.x_vel, self.y_vel)
+
+        self.fall_count += 1
     
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
+        screen.blit(self.sprite, (self.rect.x, self.rect.y))
 
 def handle_move(player):
     keys = pygame.key.get_pressed()
