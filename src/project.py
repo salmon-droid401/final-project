@@ -7,8 +7,6 @@ resolution = (1920, 1080)
 player_vel = 10
 screen = pygame.display.set_mode(resolution)
 
-def flip(sprite):
-    return [pygame.transform.flip(sprite, True, False)]
 
 class Player(pygame.sprite.Sprite):
     color = (255, 0, 0)
@@ -16,6 +14,7 @@ class Player(pygame.sprite.Sprite):
     sprite = pygame.image.load("Player.png")
 
     def __init__(self, x, y, width, height):
+        super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 0
         self.y_vel = 0
@@ -41,13 +40,32 @@ class Player(pygame.sprite.Sprite):
             self.animation_count = 0
 
     def loop(self, fps):
-        self.y_vel += min(1,  (self.fall_count / fps) * self.gravity)
+        # self.y_vel += min(1,  (self.fall_count / fps) * self.gravity)
         self.move(self.x_vel, self.y_vel)
 
         self.fall_count += 1
     
     def draw(self, screen):
         screen.blit(self.sprite, (self.rect.x, self.rect.y))
+
+class Object(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height, name=None):
+        super().__init__()
+        self.rect = pygame.Rect(x, y, width, height)
+        self.image = pygame.Surface((width, height), pygame.SRCALPHA)
+        self.width = width
+        self.height = height
+        self.name = name
+    
+    def draw(self, screen):
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+
+class Block(Object):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, size, size)
+        block = pygame.image.load("Block.png")
+        self.image.blit(block, (0, 0))
+        self.mask = pygame.mask.from_surface(self.image)
 
 def handle_move(player):
     keys = pygame.key.get_pressed()
@@ -58,11 +76,24 @@ def handle_move(player):
     if keys[pygame.K_d]:
         player.move_right(player_vel)
 
+def draw(screen, background, player, objects):
+    screen.blit(background, (0,0))
+    
+    for obj in objects:
+        obj.draw(screen)
+    
+    player.draw(screen)
+
+    pygame.display.update()
+
 def main():
     bg = pygame.image.load("Background.png")
     fps = 60
     clock = pygame.time.Clock()
+    block_size = 64
+
     player = Player(100, 100, 64, 64)
+    blocks = [Block(0, 1080 - block_size, block_size)]
     running = True
 
     while running:
@@ -72,12 +103,9 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        screen.blit(bg, (0,0))
-
         player.loop(fps)
         handle_move(player)
-        player.draw(screen)
-        pygame.display.update()
+        draw(screen, bg, player, blocks)
 
     pygame.quit()
 
