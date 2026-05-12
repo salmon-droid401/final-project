@@ -9,7 +9,6 @@ screen = pygame.display.set_mode(resolution)
 
 
 class Player(pygame.sprite.Sprite):
-    color = (255, 0, 0)
     gravity = 1
     sprite = pygame.image.load("Player.png")
 
@@ -141,11 +140,14 @@ def main():
     clock = pygame.time.Clock()
     block_size = 64
 
-    player = Player(0, 100, 64, 64)
-    floor = [Block(i* block_size, 1080 - block_size, block_size) 
-             for i in range(-1920 // block_size * 2, block_size)]
-    blocks = [*floor, Block(0, 1080 - block_size * 2, block_size), 
-              Block(block_size * 3, 1080 - block_size * 3, block_size)]
+    player = Player(400, 800, 64, 64)
+    # floor = [Block(i* block_size, 1080 - block_size, block_size) 
+    #         for i in range(-1920 // block_size * 2, block_size)]
+    blocks = [Block(400, 1080 - block_size * 3, block_size), 
+              Block(400 + block_size * 6, 1080 - block_size * 4, block_size),
+              Block(400 + block_size * 7, 1080 - block_size * 4, block_size),
+              Block(400 + block_size * 12, 1080 - block_size * 5, block_size),
+              Block(400 + block_size * 17, 1080 - block_size * 6, block_size)]
     offset_x = 0
     scroll_area_width = 200
     running = True
@@ -160,7 +162,7 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE and player.jump_count < 1:
                     player.jump()
-
+        
         player.loop(fps)
         handle_move(player, blocks)
         draw(screen, bg, player, blocks, offset_x)
