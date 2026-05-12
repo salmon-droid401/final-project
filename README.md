@@ -12,6 +12,6 @@ GitHub Repo: <https://github.com/salmon-droid401/final-project.git>
 When designing the movement, I wanted it to feel faster because the player was running away. To accomplish this,
 I made the jumps more horizontal than vertical so the player would spend less time falling and landing on the platforms.
 ### Future Improvement
-In the future, I want to add the enemy bird that I originally planned for so that there's a threat against the player.
+In the future, I want to add the enemy bird that I originally planned for so that there is a threat against the player.
 
 I followed most of this tutorial to make this game: <https://youtu.be/6gLeplbqtqg?si=0VqjZqega64aDXAZ\>
