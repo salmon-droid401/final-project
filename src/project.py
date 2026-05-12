@@ -1,5 +1,4 @@
 import pygame
-import math
 
 pygame.init()
 pygame.display.set_caption("Garden Escape")
