@@ -25,7 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.jump_count = 0
     
     def jump(self):
-        self.y_vel = -self.gravity * 5
+        self.y_vel = -self.gravity * 6
         self.jump_count += 1
 
     def move(self, dx, dy):
@@ -99,13 +99,28 @@ def handle_vertical_collision(player, objects, dy):
         
         collided_objects.append(obj)
 
+def collide(player, objects, dx):
+    player.move(dx, 0)
+    player.update()
+    collided_object = None
+    for obj in objects:
+        if pygame.sprite.collide_mask(player, obj):
+            collided_object = obj
+            break
+    
+    player.move(-dx, 0)
+    player.update()
+    return collided_object
+
 def handle_move(player, objects):
     keys = pygame.key.get_pressed()
+    collide_left = collide(player, objects, -player_vel)
+    collide_right = collide(player, objects, player_vel)
 
     player.x_vel = 0
-    if keys[pygame.K_a]:
+    if keys[pygame.K_a] and not collide_left:
         player.move_left(player_vel)
-    if keys[pygame.K_d]:
+    if keys[pygame.K_d] and not collide_right:
         player.move_right(player_vel)
 
     handle_vertical_collision(player, objects, player.y_vel)
@@ -127,8 +142,10 @@ def main():
     block_size = 64
 
     player = Player(0, 100, 64, 64)
-    # blocks = [Block(0, 1080 - block_size, block_size)]
-    floor = [Block(i* block_size, 1080 - block_size, block_size) for i in range(-1920 // block_size * 2, block_size)]
+    floor = [Block(i* block_size, 1080 - block_size, block_size) 
+             for i in range(-1920 // block_size * 2, block_size)]
+    blocks = [*floor, Block(0, 1080 - block_size * 2, block_size), 
+              Block(block_size * 3, 1080 - block_size * 3, block_size)]
     offset_x = 0
     scroll_area_width = 200
     running = True
@@ -145,8 +162,8 @@ def main():
                     player.jump()
 
         player.loop(fps)
-        handle_move(player, floor)
-        draw(screen, bg, player, floor, offset_x)
+        handle_move(player, blocks)
+        draw(screen, bg, player, blocks, offset_x)
 
         if ((player.rect.right - offset_x >= 1920 - scroll_area_width and player.x_vel > 0) or (
             player.rect.right - offset_x <= 1920 - scroll_area_width and player.x_vel < 0)):
