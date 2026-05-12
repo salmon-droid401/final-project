@@ -64,8 +64,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.sprite)
     
-    def draw(self, screen):
-        screen.blit(self.sprite, (self.rect.x, self.rect.y))
+    def draw(self, screen, offset_x):
+        screen.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
 
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, name=None):
@@ -76,8 +76,8 @@ class Object(pygame.sprite.Sprite):
         self.height = height
         self.name = name
     
-    def draw(self, screen):
-        screen.blit(self.image, (self.rect.x, self.rect.y))
+    def draw(self, screen, offset_x):
+        screen.blit(self.image, (self.rect.x - offset_x, self.rect.y))
 
 class Block(Object):
     def __init__(self, x, y, size):
@@ -110,13 +110,13 @@ def handle_move(player, objects):
 
     handle_vertical_collision(player, objects, player.y_vel)
 
-def draw(screen, background, player, objects):
+def draw(screen, background, player, objects, offset_x):
     screen.blit(background, (0,0))
     
     for obj in objects:
-        obj.draw(screen)
+        obj.draw(screen, offset_x)
     
-    player.draw(screen)
+    player.draw(screen, offset_x)
 
     pygame.display.update()
 
@@ -127,7 +127,10 @@ def main():
     block_size = 64
 
     player = Player(0, 100, 64, 64)
-    blocks = [Block(0, 1080 - block_size, block_size)]
+    # blocks = [Block(0, 1080 - block_size, block_size)]
+    floor = [Block(i* block_size, 1080 - block_size, block_size) for i in range(-1920 // block_size * 2, block_size)]
+    offset_x = 0
+    scroll_area_width = 200
     running = True
 
     while running:
@@ -142,8 +145,12 @@ def main():
                     player.jump()
 
         player.loop(fps)
-        handle_move(player, blocks)
-        draw(screen, bg, player, blocks)
+        handle_move(player, floor)
+        draw(screen, bg, player, floor, offset_x)
+
+        if ((player.rect.right - offset_x >= 1920 - scroll_area_width and player.x_vel > 0) or (
+            player.rect.right - offset_x <= 1920 - scroll_area_width and player.x_vel < 0)):
+            offset_x += player.x_vel
 
     pygame.quit()
 
